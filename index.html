@@ -48,6 +48,10 @@ button:active:not(:disabled){transform:translateY(1px)}
   background:linear-gradient(160deg,#341521 0%,#1a0e12 60%);border:1px solid #5a2640;
   box-shadow:inset 0 1px 0 rgba(255,200,200,.07),inset 0 0 30px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.4)}
 .eyewrap{width:54px;flex:none;display:grid;place-items:center}
+.logo.rankbadge{border:0;border-radius:0;box-shadow:none;object-fit:contain;filter:drop-shadow(0 3px 0 rgba(0,0,0,.65))}
+.logo.up{animation:rankup 1s ease-out}
+@keyframes rankup{0%{transform:scale(.4) rotate(-20deg);filter:brightness(2.4)}55%{transform:scale(1.35) rotate(6deg);filter:brightness(1.6) drop-shadow(0 0 14px #ffd36a)}100%{transform:scale(1)}}
+.logo{width:54px;height:54px;border-radius:13px;border:2px solid var(--ink);box-shadow:inset 0 0 0 1px var(--edge),0 3px 0 var(--ink);display:block}
 .eye{width:54px;height:36px;filter:drop-shadow(0 0 7px rgba(255,60,60,.6))}
 .eye.a1{filter:saturate(1.3) drop-shadow(0 0 9px rgba(255,50,50,.85))}
 .eye.a2{filter:saturate(1.8) hue-rotate(-14deg) drop-shadow(0 0 13px rgba(255,30,30,1));animation:throb 1s infinite alternate}
@@ -222,7 +226,7 @@ button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--
 .tog{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;border:2px solid var(--ink);background:#1d130d;box-shadow:inset 0 0 0 1px var(--edge)}
 .tog button{min-width:64px;padding:6px 10px}.tog button.on{background:#e8741c;color:#1b0a02}
 @media (min-width:700px){#app{min-height:780px}}
-@media (max-height:700px){.eyewrap{width:44px}.eye{width:44px;height:29px}.l-q b{font-size:22px}.wax{width:54px;height:54px;font-size:13px}.stage{min-height:120px}#btnStrike{padding:10px 8px}}
+@media (max-height:700px){.eyewrap{width:44px}.logo{width:44px;height:44px;border-radius:10px}.l-q b{font-size:22px}.wax{width:54px;height:54px;font-size:13px}.stage{min-height:120px}#btnStrike{padding:10px 8px}}
 </style>
 </head>
 <body>
@@ -242,7 +246,7 @@ button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--
   </div>
 
   <section class="ledger">
-    <div class="eyewrap"><svg class="eye" viewBox="0 0 64 48" aria-hidden="true"><path d="M6 14h40l8 6-8 6H34v6h10v8H12v-8h10v-6H6z" fill="#8c96a2" stroke="#0b0508" stroke-width="3" stroke-linejoin="round"/><path d="M6 14h40l4 3H6z" fill="#c3ccd6"/><circle cx="50" cy="8" r="3" fill="#ff9a3a"/><circle cx="42" cy="5" r="2" fill="#ffd36a"/></svg></div>
+    <div class="eyewrap"><img class="logo rankbadge" id="rankimg" src="art/ranks/0.png" alt="" onerror="this.onerror=null;this.src='icon-192.png'"></div>
     <div class="grow">
       <div class="l-title" id="ranktitle">学徒 · 今日房租</div>
       <div class="l-q"><b class="num" id="rent">150</b><small>G</small><small class="rentnote" id="rentnote"></small></div>
@@ -1162,10 +1166,13 @@ const cache = {};
 function setText(id, v) { if (cache[id] !== v) { cache[id] = v; $(id).textContent = v; } }
 function setHTML(id, v) { if (cache[id] !== v) { cache[id] = v; $(id).innerHTML = v; } }
 const lastCoach = { id: null };
+let shownRank = null, shownRun = null;   // 名号徽章：换了一局（新开/读档）时静默更新，只有这一局里真的升级才提示
 function hud() {
   const rent = Forge.rentOf(run.day), s = run.anvil, fz = s && Forge.frenzyOn(run, s), rk = Forge.rankOf(run);
   setText('dayno', run.day); setText('rent', rent.toLocaleString('en-US')); setText('gold', fmtG(run.gold)); setText('worth', fmtG(rk.worth) + (rk.next ? ' / ' + fmtG(rk.next[0]) : ''));
   setText('ranktitle', `${rk.name} · 今日房租`);
+  if (shownRun !== run) { shownRun = run; shownRank = null; }
+  if (shownRank !== rk.index) { const up = shownRank !== null && rk.index > shownRank; shownRank = rk.index; const ri = $('rankimg'); ri.src = `art/ranks/${rk.index}.png`; if (up) { ri.classList.remove('up'); void ri.offsetWidth; ri.classList.add('up'); sfx.win(); vib([30, 40, 60]); toast(`升为「${rk.name}」！`); float(`升为「${rk.name}」`, '#ffd36a'); } }
   const enough = run.gold >= rent; setText('rentnote', enough ? '够交 ✓' : `还差 ${fmtG(rent - run.gold)}`); $('rentnote').classList.toggle('bad', !enough);
   $('pfill').style.width = Math.min(100, run.gold / Math.max(1, rent) * 100) + '%'; $('pbar').classList.toggle('ok', enough);
   $('rfill').style.width = (rk.next ? Math.max(0, Math.min(100, (rk.worth - Forge.RANKS[rk.index][0]) / (rk.next[0] - Forge.RANKS[rk.index][0]) * 100)) : 100) + '%';
