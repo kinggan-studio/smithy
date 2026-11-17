@@ -22,13 +22,16 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Noto Sans SC",sans-serif;
-  overflow-x:hidden;overflow-y:auto;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+  overflow:hidden;overscroll-behavior:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+body{position:fixed;inset:0;width:100%}
+*{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+img{-webkit-user-drag:none}
 body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:1;
   background:linear-gradient(180deg,rgba(8,5,3,.78) 0%,rgba(8,5,3,.35) 14%,rgba(8,5,3,0) 26%,rgba(8,5,3,0) 62%,rgba(8,5,3,.55) 78%,rgba(8,5,3,.86) 100%)}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:90;opacity:.07;mix-blend-mode:overlay;
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
-#app{position:relative;z-index:1;max-width:480px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;
-  padding:max(8px,env(safe-area-inset-top)) 12px max(16px,calc(env(safe-area-inset-bottom) + 10px));gap:7px}
+#app{position:relative;z-index:1;max-width:480px;margin:0 auto;height:100%;display:flex;flex-direction:column;
+  padding:max(8px,env(safe-area-inset-top)) 12px max(12px,calc(env(safe-area-inset-bottom) * .6 + 8px));gap:7px}
 button{font:inherit;color:inherit;border:1px solid var(--line);background:linear-gradient(180deg,#2a1a11,#1c120d);
   border-radius:12px;padding:9px 12px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,220,170,.08),0 4px 10px rgba(0,0,0,.35)}
 button:disabled{opacity:.42;cursor:default}
@@ -62,7 +65,9 @@ button:active:not(:disabled){transform:translateY(1px)}
 .pbar{height:7px;border-radius:99px;background:#150b10;border:1px solid #3a1d2a;overflow:hidden;margin:5px 0 4px}
 .pbar>i{display:block;height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,#c2410c,#f2c14e);transition:width .2s}
 .pbar.ok>i{background:linear-gradient(90deg,#2f9e5a,#9be28f)}
-.l-foot{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--dim);white-space:nowrap}
+.l-title{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.l-title #ranktitle{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.l-foot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--dim);white-space:nowrap;min-width:0;flex-wrap:wrap;row-gap:1px}
 .flames{display:flex;gap:1px;margin-left:auto}
 .fl{width:15px;height:15px;color:#3b2a2f;transition:color .3s,filter .3s}
 .fl.on{color:var(--danger);filter:drop-shadow(0 0 5px rgba(255,74,43,.9))}
@@ -76,7 +81,7 @@ button:active:not(:disabled){transform:translateY(1px)}
 .stage{position:relative;flex:100 1 150px;min-height:150px;border-radius:var(--r);overflow:hidden;background:transparent}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;opacity:0;background:radial-gradient(circle,transparent 30%,rgba(255,40,40,.55));transition:opacity .15s}
 .stage.flash::after{opacity:1}
-#cv{position:fixed;left:0;top:0;width:100vw;height:100dvh;display:block;z-index:0;pointer-events:none}
+#cv{position:fixed;left:0;top:0;width:100%;height:100%;display:block;z-index:0;pointer-events:none}
 .odds{position:absolute;left:8px;right:8px;top:8px;display:grid;grid-template-columns:repeat(5,1fr);gap:4px;pointer-events:none}
 .odds div{text-align:center;padding:3px 0 2px;border-radius:8px;border:1px solid var(--line);background:rgba(15,10,7,.78);font-size:11px;color:var(--dim);line-height:1.2}
 .odds b{display:block;font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.15}
@@ -111,7 +116,7 @@ button:active:not(:disabled){transform:translateY(1px)}
 .cn{flex:none;padding:5px 10px;border-radius:99px;border:1px solid #5b4580;background:linear-gradient(180deg,#2a2038,#17101f);font-size:12px;color:#e8d3ff}
 .cn b{color:#fff}
 
-.mainbtns{display:grid;grid-template-columns:2.2fr 1fr;gap:8px;flex:1 1 56px;max-height:128px;min-height:56px}
+.mainbtns{display:grid;grid-template-columns:2.2fr 1fr;gap:8px;flex:1 1 66px;max-height:128px;min-height:66px}
 .mainbtns button{height:100%}
 #btnStrike{position:relative;border:1px solid #ffc27a;padding:14px 8px;font-family:var(--serif);font-weight:900;font-size:22px;letter-spacing:.3em;text-indent:.3em;
   color:#2a1205;text-shadow:0 1px 0 rgba(255,230,190,.5);border-radius:14px;
@@ -225,7 +230,7 @@ button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--
 .mrow small b{color:#9be28f}.mrow small .lo{color:#ff9a86}
 .tog{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;border-radius:12px;border:2px solid var(--ink);background:#1d130d;box-shadow:inset 0 0 0 1px var(--edge)}
 .tog button{min-width:64px;padding:6px 10px}.tog button.on{background:#e8741c;color:#1b0a02}
-@media (min-width:700px){#app{min-height:780px}}
+@media (min-width:700px){html,body{overflow-y:auto}body{position:static;width:auto}#app{min-height:780px}}
 @media (max-height:700px){.eyewrap{width:44px}.logo{width:44px;height:44px;border-radius:10px}.l-q b{font-size:22px}.wax{width:54px;height:54px;font-size:13px}.stage{min-height:120px}#btnStrike{padding:10px 8px}}
 </style>
 </head>
@@ -246,13 +251,13 @@ button:active:not(:disabled){transform:translateY(2px);box-shadow:0 1px 0 var(--
   </div>
 
   <section class="ledger">
-    <div class="eyewrap"><img class="logo rankbadge" id="rankimg" src="art/ranks/0.png" alt="" onerror="this.onerror=null;this.src='icon-192.png'"></div>
+    <div class="eyewrap"><img class="logo rankbadge" id="rankimg" src="art/ranks/0.png" alt=""></div>
     <div class="grow">
-      <div class="l-title" id="ranktitle">学徒 · 今日房租</div>
+      <div class="l-title"><span id="ranktitle">学徒 · 今日房租</span><span class="flames" id="flames" title="欠租次数：满 3 次铺子就被收走了"><em class="flab">欠租</em><svg class="fl"><use href="#flame"/></svg><svg class="fl"><use href="#flame"/></svg><svg class="fl"><use href="#flame"/></svg></span></div>
       <div class="l-q"><b class="num" id="rent">150</b><small>G</small><small class="rentnote" id="rentnote"></small></div>
       <div class="pbar" id="pbar" title="金币够不够交今天的房租"><i id="pfill"></i></div>
       <div class="l-foot"><span><img class="mini" src="art/icons/coin.png" alt="" onerror="this.style.display='none'"> <b class="gold num" id="gold">0</b></span><span>总资产 <b class="gold num" id="worth">0</b></span>
-        <span class="flames" id="flames" title="欠租次数：满 3 次铺子就被收走了"><em class="flab">欠租</em><svg class="fl"><use href="#flame"/></svg><svg class="fl"><use href="#flame"/></svg><svg class="fl"><use href="#flame"/></svg></span></div>
+</div>
       <div class="rbar" id="rbar" title="总资产离下一个名号还有多远"><i id="rfill"></i></div>
     </div>
     <button class="wax" id="wax">结束<br>今天</button>
@@ -1169,10 +1174,10 @@ const lastCoach = { id: null };
 let shownRank = null, shownRun = null;   // 名号徽章：换了一局（新开/读档）时静默更新，只有这一局里真的升级才提示
 function hud() {
   const rent = Forge.rentOf(run.day), s = run.anvil, fz = s && Forge.frenzyOn(run, s), rk = Forge.rankOf(run);
-  setText('dayno', run.day); setText('rent', rent.toLocaleString('en-US')); setText('gold', fmtG(run.gold)); setText('worth', fmtG(rk.worth) + (rk.next ? ' / ' + fmtG(rk.next[0]) : ''));
+  setText('dayno', run.day); setText('rent', rent.toLocaleString('en-US')); setText('gold', fmtG(run.gold)); setText('worth', fmtG(rk.worth) + (rk.next ? '/' + fmtG(rk.next[0]) : ''));
   setText('ranktitle', `${rk.name} · 今日房租`);
   if (shownRun !== run) { shownRun = run; shownRank = null; }
-  if (shownRank !== rk.index) { const up = shownRank !== null && rk.index > shownRank; shownRank = rk.index; const ri = $('rankimg'); ri.src = `art/ranks/${rk.index}.png`; if (up) { ri.classList.remove('up'); void ri.offsetWidth; ri.classList.add('up'); sfx.win(); vib([30, 40, 60]); toast(`升为「${rk.name}」！`); float(`升为「${rk.name}」`, '#ffd36a'); } }
+  if (shownRank !== rk.index) { const up = shownRank !== null && rk.index > shownRank; shownRank = rk.index; const ri = $('rankimg'); ri.onerror = () => { ri.onerror = null; ri.src = 'icon-192.png'; }; ri.src = `art/ranks/${rk.index}.png`; if (up) { ri.classList.remove('up'); void ri.offsetWidth; ri.classList.add('up'); sfx.win(); vib([30, 40, 60]); toast(`升为「${rk.name}」！`); float(`升为「${rk.name}」`, '#ffd36a'); } }
   const enough = run.gold >= rent; setText('rentnote', enough ? '够交 ✓' : `还差 ${fmtG(rent - run.gold)}`); $('rentnote').classList.toggle('bad', !enough);
   $('pfill').style.width = Math.min(100, run.gold / Math.max(1, rent) * 100) + '%'; $('pbar').classList.toggle('ok', enough);
   $('rfill').style.width = (rk.next ? Math.max(0, Math.min(100, (rk.worth - Forge.RANKS[rk.index][0]) / (rk.next[0] - Forge.RANKS[rk.index][0]) * 100)) : 100) + '%';
